@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "@three-ws/portal"
+abstract: "Turn any website into a walkable 3D world. Reads a page's real structure and lays out a city from it: sections become buildings, links become doors, images become billboards. Pure layout in JS, a client for the three.ws Portal API, a CLI, and an MCP server."
+type: software
+authors:
+  - name: three.ws contributors
+repository-code: "https://github.com/nirholas/portal"
+url: "https://nirholas.github.io/portal/"
+license: Apache-2.0
+version: 0.1.0

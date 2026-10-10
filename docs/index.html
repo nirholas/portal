@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@three-ws/portal: Turn any website into a walkable 3D world</title>
+<meta name="description" content="Turn any website into a walkable 3D world. Reads a page's real structure and lays out a city from it: sections become buildings, links become doors, images become billboards. Pure layout in JS, a client for the three.ws Portal API, a CLI, and an MCP server.">
+<link rel="canonical" href="https://nirholas.github.io/portal/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="@three-ws/portal">
+<meta property="og:description" content="Turn any website into a walkable 3D world. Reads a page's real structure and lays out a city from it: sections become buildings, links become doors, images become billboards. Pure layout in JS, a client for the three.ws Portal API, a CLI, and an MCP server.">
+<meta property="og:url" content="https://nirholas.github.io/portal/">
+<meta property="og:image" content="https://nirholas.github.io/portal/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="text/plain" href="https://nirholas.github.io/portal/llms.txt" title="llms.txt">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"@three-ws/portal","description":"Turn any website into a walkable 3D world. Reads a page's real structure and lays out a city from it: sections become buildings, links become doors, images become billboards. Pure layout in JS, a client for the three.ws Portal API, a CLI, and an MCP server.","codeRepository":"https://github.com/nirholas/portal","url":"https://nirholas.github.io/portal/","programmingLanguage":"JavaScript","license":"https://spdx.org/licenses/Apache-2.0","version":"0.1.0","runtimePlatform":"Node.js","isPartOf":{"@type":"WebSite","name":"three.ws","url":"https://three.ws"}}</script>
+<style>
+:root{--bg:#fff;--fg:#0f172a;--mut:#475569;--line:#e2e8f0;--code:#f1f5f9;--acc:#6d28d9}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1020;--fg:#e2e8f0;--mut:#94a3b8;--line:#1e293b;--code:#111a33;--acc:#a78bfa}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}
+header{border-bottom:1px solid var(--line)}.bar{max-width:880px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.bar a{color:var(--mut);text-decoration:none;font-size:14px}.bar a:hover,.bar a:focus-visible{color:var(--acc)}.bar b{color:var(--fg);margin-right:auto}
+main{max-width:880px;margin:0 auto;padding:28px 20px 80px}h1,h2,h3{line-height:1.25}h2{margin-top:2.2em;padding-bottom:.3em;border-bottom:1px solid var(--line)}
+a{color:var(--acc)}pre{background:var(--code);padding:14px 16px;border-radius:8px;overflow:auto}code{background:var(--code);padding:.1em .35em;border-radius:4px;font-size:.92em}pre code{padding:0;background:none}
+table{border-collapse:collapse;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left}img{max-width:100%}
+</style>
+</head>
+<body>
+<header><nav class="bar" aria-label="Project"><b>@three-ws/portal</b><a href="https://github.com/nirholas/portal">GitHub</a><a href="https://www.npmjs.com/package/@three-ws/portal">npm</a><a href="llms.txt">llms.txt</a><a href="https://three.ws">three.ws</a></nav></header>
+<main>
+<div align="center"><h1>@three-ws/portal</h1>
+<p><strong>Turn any website into a walkable 3D world.</strong></p>
+<p>Paste an address; get a place. Every section becomes a building sized by what it
+says, every link becomes a door you can step through, every image becomes a
+billboard, every code block becomes a monolith. Walk it in the browser, download
+it as a <code>.glb</code>, embed it in your own page, or hand it to an agent over MCP.</p>
+<p><a href="#quick-start">Quick start</a> · <a href="#how-a-page-becomes-a-place">How a page becomes a place</a> · <a href="#api">API</a> · <a href="#cli">CLI</a> · <a href="#mcp">MCP</a> · <a href="#manners">Manners</a></p>
+</div><hr>
+<h2>Why</h2>
+<p>Every tool that &quot;visualizes a website&quot; draws a node graph. A graph tells you a
+site has 40 pages; it does not tell you which section carries the weight, where
+the dead ends are, or what it feels like to arrive. A <strong>place</strong> does, because
+size, distance and direction are things people read without being taught.</p>
+<p>Portal turns the page you already have into that place, deterministically, with
+no model in the loop: the same URL always builds the same city, so a link you
+share opens the world you walked.</p>
+<h2>Quick start</h2>
+<pre><code class="language-bash">npm install @three-ws/portal
+</code></pre>
+<pre><code class="language-js">import { fetchWorld, describeWorld } from &#39;@three-ws/portal&#39;;
+
+const { world } = await fetchWorld(&#39;example.com&#39;);
+console.log(describeWorld(world));
+// { host: &#39;example.com&#39;, sections: 2, doors: 1, tallest: { name: &#39;Example Domain&#39;, … } }
+</code></pre>
+<p>Put a live, walkable world on your own page:</p>
+<pre><code class="language-js">import { mountPortal } from &#39;@three-ws/portal&#39;;
+
+mountPortal(document.querySelector(&#39;#stage&#39;), { url: &#39;example.com&#39;, height: 560 });
+</code></pre>
+<p>Or without any JavaScript at all:</p>
+<pre><code class="language-html">&lt;iframe
+	src=&quot;https://three.ws/portal?url=example.com&amp;embed=1&quot;
+	width=&quot;100%&quot; height=&quot;520&quot; style=&quot;border:0;border-radius:14px&quot;
+	loading=&quot;lazy&quot; title=&quot;Walk example.com in 3D&quot;&gt;&lt;/iframe&gt;
+</code></pre>
+<p>No key, no account, no wallet. <code>fetchWorld</code> reads the public three.ws Portal API,
+which fetches the page once and caches the result for an hour.</p>
+<h2>How a page becomes a place</h2>
+<p>The mapping is fixed, documented, and testable, which is what makes a world
+predictable enough to share:</p>
+<table>
+<thead>
+<tr>
+<th>On the page</th>
+<th>In the world</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>The page itself</td>
+<td>A plaza with an obelisk carrying the title</td>
+</tr>
+<tr>
+<td>Each <code>h1</code>/<code>h2</code>/<code>h3</code> section</td>
+<td>A district with one building</td>
+</tr>
+<tr>
+<td>How many words a section has</td>
+<td>The building&#39;s height, on a log scale</td>
+</tr>
+<tr>
+<td>How many blocks it holds</td>
+<td>The building&#39;s footprint</td>
+</tr>
+<tr>
+<td>Each link</td>
+<td>A door on the building&#39;s wall. Same-site doors rebuild the world where they point; outside links open the page</td>
+</tr>
+<tr>
+<td>Each image</td>
+<td>A billboard beside the building, showing the real image</td>
+</tr>
+<tr>
+<td>Each code block</td>
+<td>A monolith: a tall, dark, emissive slab</td>
+</tr>
+<tr>
+<td><code>theme-color</code>, or the host name</td>
+<td>The palette, so a site looks like itself</td>
+</tr>
+</tbody></table>
+<p>Layout is a pure function with a seeded PRNG. Call it yourself on any outline:</p>
+<pre><code class="language-js">import { buildWorld, collidersFor } from &#39;@three-ws/portal/layout&#39;;
+
+const world = buildWorld(outline);       // no network, no DOM, no three.js
+const solids = collidersFor(world);      // circles, for your own player controller
+</code></pre>
+<h2>API</h2>
+<table>
+<thead>
+<tr>
+<th>Export</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fetchWorld(url, opts?)</code></td>
+<td>Build (or read from cache) <code>{ world, outline, cached, stale }</code></td>
+</tr>
+<tr>
+<td><code>fetchOutline(url, opts?)</code></td>
+<td>The structural read only: headings, weights, links, images</td>
+</tr>
+<tr>
+<td><code>fetchWorldGlb(url, opts?)</code></td>
+<td>The world as a glTF binary (<code>ArrayBuffer</code>)</td>
+</tr>
+<tr>
+<td><code>mountPortal(el, { url, height? })</code></td>
+<td>Mount a live walkable world into an element</td>
+</tr>
+<tr>
+<td><code>embedSnippet(url, opts?)</code></td>
+<td>The same thing as an HTML string</td>
+</tr>
+<tr>
+<td><code>describeWorld(world)</code></td>
+<td>A compact summary: districts, doors, tallest section</td>
+</tr>
+<tr>
+<td><code>buildWorld(outline, opts?)</code></td>
+<td>The pure layout function</td>
+</tr>
+<tr>
+<td><code>collidersFor(world)</code></td>
+<td>Collision circles for the solids in a world</td>
+</tr>
+<tr>
+<td><code>paletteFor(outline)</code></td>
+<td>The deterministic palette for a site</td>
+</tr>
+<tr>
+<td><code>PortalError</code></td>
+<td>Every failure, carrying the API&#39;s own <code>code</code></td>
+</tr>
+</tbody></table>
+<p><code>opts</code> accepts <code>endpoint</code> (default <code>https://three.ws/api/portal</code>), <code>fetch</code> (bring
+your own), and <code>signal</code>.</p>
+<p>Errors are typed rather than thrown as strings:</p>
+<pre><code class="language-js">import { fetchWorld, PortalError } from &#39;@three-ws/portal&#39;;
+
+try {
+	await fetchWorld(&#39;example.com/private&#39;);
+} catch (err) {
+	if (err instanceof PortalError &amp;&amp; err.code === &#39;robots_disallowed&#39;) {
+		console.log(&#39;That site asks crawlers to stay out, so Portal does.&#39;);
+	}
+}
+</code></pre>
+<p>Codes you can branch on: <code>invalid_url</code>, <code>robots_disallowed</code>, <code>blocked_host</code>,
+<code>not_html</code>, <code>no_structure</code>, <code>too_large</code>, <code>unreachable</code>, <code>upstream_status</code>,
+<code>rate_limited</code>.</p>
+<h2>CLI</h2>
+<pre><code class="language-bash">npx @three-ws/portal three.ws                    # the world, summarized
+npx @three-ws/portal three.ws --glb site.glb     # save it as a 3D file
+npx @three-ws/portal three.ws --json world.json  # save the world document
+npx @three-ws/portal three.ws --open             # print the walkable link
+</code></pre>
+<pre><code>  three.ws
+  24 districts · 1563 words · 42 doors (38 internal) · 2 billboards · 0 code monoliths
+
+  ███████████···········    109w  Your 3D agent. In your room.
+  █████████·············     66w  Your agents don&#39;t just talk. They trade.
+  █████·················     20w  One tag. Any site.
+</code></pre>
+<h2>MCP</h2>
+<p>An agent that fetches a page gets a wall of text. Over MCP it can ask for the
+page&#39;s <em>shape</em> instead.</p>
+<pre><code class="language-bash">claude mcp add portal -- npx -y @three-ws/portal portal-mcp
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>walk_site</code></td>
+<td>The world: districts, doors (with targets), billboards, plus a walkable link and a GLB URL</td>
+</tr>
+<tr>
+<td><code>site_shape</code></td>
+<td>The heading spine with the weight of each section. The cheap read</td>
+</tr>
+</tbody></table>
+<p>Both accept any public URL and honour the same manners as the API.</p>
+<h2>Manners</h2>
+<p>Portal is a crawler that runs on a person&#39;s request, and behaves like one:</p>
+<ul>
+<li><strong>It identifies itself</strong> as <code>ThreeWSPortalBot/1.0 (+https://three.ws/portal)</code>.</li>
+<li><strong>It reads robots.txt first</strong> and honours a <code>Disallow</code> for that token with a
+clean <code>robots_disallowed</code> error. Rules are matched per RFC 9309: most specific
+user-agent group, longest matching rule, <code>Allow</code> wins a tie.</li>
+<li><strong>It reads a page once.</strong> Worlds are cached for an hour fleet-wide, so a link
+shared with a thousand people is one request to the origin.</li>
+<li><strong>It is bounded</strong>: 3 MB of HTML, a 12 second deadline, and an SSRF guard that
+re-resolves the host, refuses private address ranges, and pins the socket to
+the address it validated.</li>
+</ul>
+<h2>License</h2>
+<p>Apache-2.0. Built by <a href="https://three.ws">three.ws</a>.</p>
+<hr>
+<p>Part of <a href="https://three.ws">three.ws</a>, the open-source platform for 3D AI agents. This repository is exported from the <a href="https://github.com/nirholas/three.ws/tree/main/packages/portal">monorepo</a>, which is the source of truth: open issues here, and send larger changes there.</p>
+
+</main>
+</body>
+</html>
