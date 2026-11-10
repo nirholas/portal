@@ -1,0 +1,19 @@
+{
+  "name": "three-ws-portal",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Read any public web page as a walkable 3D world or a weighted heading outline, via the Portal CLI, library and MCP server.",
+  "plugins": [
+    {
+      "name": "three-ws-portal",
+      "source": "./",
+      "description": "Read any public web page as a walkable 3D world or a weighted heading outline, via the Portal CLI, library and MCP server.",
+      "tags": [
+        "mcp",
+        "3d",
+        "web"
+      ]
+    }
+  ]
+}
