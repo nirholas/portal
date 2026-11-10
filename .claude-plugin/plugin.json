@@ -1,0 +1,19 @@
+{
+  "name": "three-ws-portal",
+  "version": "0.1.0",
+  "description": "Read any public web page as a walkable 3D world or a weighted heading outline, via the Portal CLI, library and MCP server.",
+  "author": {
+    "name": "nirholas"
+  },
+  "repository": "https://github.com/nirholas/portal",
+  "license": "Apache-2.0",
+  "keywords": [
+    "three-ws",
+    "portal",
+    "3d",
+    "website",
+    "mcp",
+    "crawler"
+  ],
+  "homepage": "https://nirholas.github.io/portal/"
+}
