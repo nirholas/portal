@@ -6,6 +6,7 @@
     "name": "nirholas"
   },
   "repository": "https://github.com/nirholas/portal",
+  "homepage": "https://nirholas.github.io/portal/",
   "license": "Apache-2.0",
   "keywords": [
     "three-ws",
@@ -14,6 +15,5 @@
     "website",
     "mcp",
     "crawler"
-  ],
-  "homepage": "https://nirholas.github.io/portal/"
+  ]
 }
